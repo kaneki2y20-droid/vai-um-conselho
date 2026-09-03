@@ -54,37 +54,71 @@
         h1 { font-size: 1.8rem; font-weight: 400; letter-spacing: 2px; margin-bottom: 25px; color: #ffffff; text-shadow: 0 2px 10px rgba(168, 85, 247, 0.4); }
         p { font-size: 1.1rem; line-height: 1.6; margin-bottom: 35px; color: #d1c4e9; }
         .highlight { color: #a855f7; font-weight: bold; display: block; font-size: 1.4rem; margin-top: 15px; text-shadow: 0 0 8px rgba(168, 85, 247, 0.3); }
-        .btn-destino {
+        
+        .btn-destino, .btn-revelar {
             display: inline-block;
             width: 100%;
             padding: 16px 30px;
-            background: linear-gradient(135deg, #6b21a8 0%, #4c1d95 100%);
-            color: #ffffff;
             font-size: 1.1rem;
             font-weight: bold;
             text-decoration: none;
             border-radius: 50px;
-            border: 1px solid rgba(233, 213, 255, 0.3);
-            box-shadow: 0 4px 15px rgba(107, 33, 168, 0.4);
             transition: all 0.3s ease;
             cursor: pointer;
+            margin-bottom: 15px;
         }
-        .btn-destino:hover { transform: scale(1.03); box-shadow: 0 6px 25px rgba(168, 85, 247, 0.6); background: linear-gradient(135deg, #7e22ce 0%, #5b21b6 100%); }
-        .btn-destino:active { transform: scale(0.98); }
+
+        .btn-destino {
+            background: linear-gradient(135deg, #6b21a8 0%, #4c1d95 100%);
+            color: #ffffff;
+            border: 1px solid rgba(233, 213, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(107, 33, 168, 0.4);
+        }
+        .btn-destino:hover { transform: scale(1.02); background: linear-gradient(135deg, #7e22ce 0%, #5b21b6 100%); }
+
+        .btn-revelar {
+            background: transparent;
+            color: #d4af37;
+            border: 2px solid #d4af37;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+            display: none; /* Escondido no início */
+        }
+        .btn-revelar:hover { background: rgba(212, 175, 55, 0.1); transform: scale(1.02); }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="icon">✨</div>
-        <h1>O que o destino quer te dizer?</h1>
-        <p>
+        <h1 id="main-title">O que o destino quer te dizer?</h1>
+        <p id="main-text">
             Precisa de uma resposta hoje? Peça um conselho ao destino por apenas 
             <span class="highlight">R$ 1,00</span>
         </p>
-        <!-- ADICIONADO TARGET="_BLANK" E REL="NOREFERRER" PARA FORÇAR REDIRECIONAMENTO LIMPO -->
-        <a href="https://mercadopago.com.br" target="_blank" rel="noopener noreferrer" class="btn-destino">
-            Clique aqui para receber sua mensagem de superação ou amor
+
+        <!-- BOTÃO DE PAGAMENTO (Abre direto o link limpo) -->
+        <a href="https://mercadopago.com.br" 
+           target="_blank" 
+           rel="noopener noreferrer" 
+           class="btn-destino" 
+           onclick="liberarBotao()">
+            Clique aqui para pagar R$ 1,00
+        </a>
+
+        <!-- BOTÃO SECRETO (Aparece após o clique para levar ao conselho) -->
+        <a href="conselho.html" id="btn-secret" class="btn-revelar">
+            Já paguei! Ver meu Conselho 🔮
         </a>
     </div>
+
+    <script>
+        function liberarBotao() {
+            // Quando o cliente clica para pagar, o site libera o botão de destino após 3 segundos
+            setTimeout(() => {
+                document.getElementById('btn-secret').style.display = 'inline-block';
+                document.getElementById('main-title').innerText = "Pagamento Realizado?";
+                document.getElementById('main-text').innerText = "Se você já concluiu o pagamento na outra aba, clique abaixo para abrir seu portal.";
+            }, 3000);
+        }
+    </script>
 </body>
 </html>
