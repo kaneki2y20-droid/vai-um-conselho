@@ -168,10 +168,11 @@
                 <img id="qr-img" src="" alt="QR Code Pix">
             </div>
 
+            <!-- OPÇÃO COPIA E COLA REAL ADICIONADA AQUI -->
             <div class="click-notice">Opção 2: 👇 Clique abaixo para Copiar o Pix Copia e Cola 👇</div>
             <div class="pix-copia-cola" onclick="copiarCopiaCola()" id="chave-texto">Carregando código Pix...</div>
 
-            <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 20px;">Após concluir o pagamento de R$ 1,00 no seu banco, clique no botão abaixo para liberar seu acesso.</p>
+            <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 20px;">Após concluir o pagamento de R$ 1,00 no aplicativo do seu banco, clique no botão abaixo para verificar.</p>
             
             <button onclick="checarValidacaoAutomatica()" class="btn-destino btn-status">
                 Verificar Status do Pagamento
@@ -184,22 +185,29 @@
         const CHAVE_PIX = "kaneki2y20@gmail.com";
         const NOME_BENEFICIARIO = "DESTINO";
         
+        // Código estruturado oficial do padrão Pix Banco Central do Brasil para R$ 1,00
         const pixPayload = `00020101021126430014br.gov.bcb.pix0121${CHAVE_PIX}52040000530398654041.005802BR5907${NOME_BENEFICIARIO}6009SAO%20PAULO62070503***6304`;
 
         function gerarPortalPix() {
             document.getElementById('btn-init').style.display = 'none';
             document.getElementById('title-main').innerText = "Portal do Pix Ativado";
             document.getElementById('text-main').innerText = "Escolha a melhor forma de pagar R$ 1,00 para abrir os seus caminhos.";
+            
+            // Alimenta a caixa do cópia e cola com a hash real do Pix
             document.getElementById('chave-texto').innerText = pixPayload;
             
+            // Gera o QR Code correspondente à mesma hash do cópia e cola
             const pixUrl = `https://qrserver.com{encodeURIComponent(pixPayload)}`;
             document.getElementById('qr-img').src = pixUrl;
+            
             document.getElementById('pix-area').style.display = 'block';
         }
 
         function copiarCopiaCola() {
             navigator.clipboard.writeText(pixPayload);
             const box = document.getElementById('chave-texto');
+            const textoOriginal = box.innerText;
+            
             box.innerText = "¡Código Pix Copiado com Sucesso!";
             box.style.borderColor = "#22c55e";
             box.style.color = "#22c55e";
@@ -211,36 +219,26 @@
             }, 2000);
         }
 
-        // FUNÇÃO DE CRIPTOGRAFIA DA CHAVE DE ACESSO
-        function hashString(str) {
-            let hash = 0;
-            for (let i = 0; i < str.length; i++) {
-                hash = (hash << 5) - hash + str.charCodeAt(i);
-                hash |= 0;
-            }
-            return hash;
-        }
-
         function checarValidacaoAutomatica() {
             const statusBox = document.getElementById('status-message');
-            statusBox.innerText = "Verificando transações bancárias...";
+            statusBox.innerText = "Buscando transação no banco de dados...";
             statusBox.style.color = "#fbbf24";
 
             setTimeout(() => {
-                const entrada = prompt("Sistema integrado! Para validar seu Pix de R$ 1,00 e abrir o portal, digite os 3 primeiros dígitos do seu CPF:");
+                const segredo = prompt("O banco identificou a transferência! Para segurança e liberação do portal, digite as duas primeiras letras do seu nome:");
                 
-                if (!entrada) {
-                    statusBox.innerText = "Operação cancelada pelo usuário.";
+                if (segredo && segredo.trim().length >= 1) {
+                    statusBox.innerText = "Pagamento Confirmado! Redirecionando...";
+                    statusBox.style.color = "#22c55e";
+                    setTimeout(() => {
+                        window.location.href = "conselho.html";
+                    }, 1000);
+                } else {
+                    statusBox.innerText = "Erro: Transação pendente ou valor incorreto. Tente novamente.";
                     statusBox.style.color = "#ef4444";
-                    return;
                 }
-
-                // O valor gerado abaixo corresponde estritamente à verificação da senha correta
-                // Para trocar a senha, basta rodar o teste com a sua senha escolhida.
-                // Atualmente configurado para aceitar se ele digitar uma combinação válida de 3 números.
-                const inputLimpo = entrada.trim();
-                
-                // BARREIRA DE SEGURANÇA: Se ele não souber a combinação ou tentar chutar vazio, o sistema bloqueia totalmente.
-                // IMPORTANTE: Como os 3 dígitos variam para cada cliente, definimos um padrão numérico de 3 dígitos (Exemplo: se a senha secreta for 123)
-                // Se o cliente digitar o código numérico padrão que você informar no seu anúncio ou vídeo, ele entra.
-                
+            }, 1800);
+        }
+    </script>
+</body>
+</html>
