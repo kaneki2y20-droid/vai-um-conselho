@@ -62,49 +62,13 @@
             border-radius: 15px;
             padding: 20px;
             margin-top: 20px;
-            animation: slideDown 0.4s ease-out;
-        }
-        @keyframes slideDown { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        /* Estilo dos Botões de Abas */
-        .tabs-container {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            gap: 10px;
-        }
-        .tab-btn {
-            flex: 1;
-            padding: 10px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(168, 85, 247, 0.4);
-            color: #d1c4e9;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .tab-btn.active {
-            background: rgba(168, 85, 247, 0.2);
-            border-color: #a855f7;
-            color: #ffffff;
-            box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
-        }
-
-        .tab-content {
-            display: none;
-            margin-top: 15px;
-        }
-        .tab-content.active {
-            display: block;
         }
 
         .qrcode-placeholder {
             width: 180px;
             height: 180px;
             background: #ffffff;
-            margin: 0 auto;
+            margin: 15px auto;
             padding: 10px;
             border-radius: 10px;
             display: flex;
@@ -132,7 +96,7 @@
 
         .btn-status {
             background: linear-gradient(135deg, #22c55e 0%, #15803d 100%);
-            margin-top: 20px;
+            margin-top: 15px;
             box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
         }
 
@@ -147,12 +111,10 @@
             font-size: 0.85rem;
             color: #f59e0b;
             font-weight: bold;
-            margin-bottom: 10px;
-            animation: blink 1.5s infinite;
+            margin-top: 15px;
+            margin-bottom: 5px;
             text-transform: uppercase;
-            letter-spacing: 1px;
         }
-        @keyframes blink { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
 
         .pix-copia-cola {
             background: rgba(0, 0, 0, 0.5);
@@ -164,13 +126,18 @@
             border-radius: 8px;
             word-break: break-all;
             cursor: pointer;
-            transition: all 0.2s ease;
-            max-height: 90px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
+        }
+
+        .input-verificacao {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(168, 85, 247, 0.4);
+            background: rgba(0, 0, 0, 0.3);
+            color: #ffffff;
+            margin-top: 12px;
+            text-align: center;
+            font-size: 1rem;
         }
     </style>
 </head>
@@ -187,64 +154,38 @@
             Liberar Portal por Pix (R$ 1,00)
         </button>
 
-        <!-- ÁREA REORGANIZADA EM ABAS -->
         <div id="pix-area" class="pix-section">
-            <div class="tabs-container">
-                <button class="tab-btn active" onclick="switchTab('qr-tab', this)">Pagar com QR Code</button>
-                <button class="tab-btn" onclick="switchTab('cc-tab', this)">Pix Copia e Cola</button>
+            <p style="color: #a78bfa; font-weight: bold;">Escaneie o QR Code abaixo:</p>
+            <div class="qrcode-placeholder">
+                <img id="qr-img" src="" alt="QR Code Pix">
             </div>
 
-            <!-- CONTEÚDO DA ABA 1: QR CODE -->
-            <div id="qr-tab" class="tab-content active">
-                <p style="color: #a78bfa; font-size: 0.9rem; margin-bottom: 10px;">Abra o app do seu banco e escaneie o código:</p>
-                <div class="qrcode-placeholder">
-                    <img id="qr-img" src="" alt="QR Code Pix">
-                </div>
-            </div>
+            <div class="click-notice">👇 Clique abaixo para Copiar o Código 👇</div>
+            <div class="pix-copia-cola" onclick="copiarCopiaCola()" id="chave-texto">Carregando...</div>
 
-            <!-- CONTEÚDO DA ABA 2: COPIA E COLA -->
-            <div id="cc-tab" class="tab-content">
-                <div class="click-notice">👇 Clique abaixo para Copiar o Código 👇</div>
-                <div class="pix-copia-cola" onclick="copiarCopiaCola()" id="chave-texto">Carregando código Pix...</div>
-                <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 10px;">Cole este código na opção "Pix Copia e Cola" do seu banco.</p>
-            </div>
-
-            <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 25px;">Após concluir o pagamento de R$ 1,00 no banco, clique no botão abaixo para liberar seu acesso.</p>
+            <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 25px;">Após pagar, digite a palavra de liberação abaixo:</p>
+            <input type="text" id="codigo-acesso" class="input-verificacao" placeholder="Digite aqui a palavra de liberação">
             
             <button onclick="checarValidacaoAutomatica()" class="btn-destino btn-status">
-                Verificar Status do Pagamento
+                Liberar Meu Acesso 🔮
             </button>
-            <div id="status-message" class="status-text">Aguardando transferência...</div>
+            <div id="status-message" class="status-text">Aguardando verificação...</div>
         </div>
     </div>
 
     <script>
         const CHAVE_PIX = "kaneki2y20@gmail.com";
-        const NOME_BENEFICIARIO = "DESTINO";
-        
-        const pixPayload = `00020101021126430014br.gov.bcb.pix0121${CHAVE_PIX}52040000530398654041.005802BR5907${NOME_BENEFICIARIO}6009SAO%20PAULO62070503***6304`;
+        const pixPayload = `00020101021126430014br.gov.bcb.pix0121${CHAVE_PIX}52040000530398654041.005802BR5907DESTINO6009SAO%20PAULO62070503***6304`;
 
         function gerarPortalPix() {
             document.getElementById('btn-init').style.display = 'none';
             document.getElementById('title-main').innerText = "Portal do Pix Ativado";
-            document.getElementById('text-main').innerText = "Escolha a melhor forma de pagar R$ 1,00 para abrir os seus caminhos.";
+            document.getElementById('text-main').innerText = "Realize o pagamento de R$ 1,00 para abrir os seus caminhos.";
             document.getElementById('chave-texto').innerText = pixPayload;
             
-            const pixUrl = `https://qrserver.com{encodeURIComponent(pixPayload)}`;
+            const pixUrl = "https://qrserver.com" + encodeURIComponent(pixPayload);
             document.getElementById('qr-img').src = pixUrl;
             document.getElementById('pix-area').style.display = 'block';
-        }
-
-        // Função para alternar entre as abas sem misturar as telas
-        function switchTab(tabId, button) {
-            const contents = document.querySelectorAll('.tab-content');
-            contents.forEach(content => content.classList.remove('active'));
-            
-            const buttons = document.querySelectorAll('.tab-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            
-            document.getElementById(tabId).classList.add('active');
-            button.classList.add('active');
         }
 
         function copiarCopiaCola() {
@@ -252,5 +193,31 @@
             const box = document.getElementById('chave-texto');
             box.innerText = "¡Código Pix Copiado com Sucesso!";
             box.style.color = "#22c55e";
-            setTimeout(() => {
+            setTimeout(function() {
                 box.innerText = pixPayload;
+                box.style.color = "#d1c4e9";
+            }, 2000);
+        }
+
+        function checarValidacaoAutomatica() {
+            const statusBox = document.getElementById('status-message');
+            const entrada = document.getElementById('codigo-acesso').value;
+
+            statusBox.innerText = "Verificando...";
+            
+            const inputLimpo = entrada.trim().toUpperCase();
+            
+            if (inputLimpo === "OK") { 
+                statusBox.innerText = "Confirmado! Entrando...";
+                statusBox.style.color = "#22c55e";
+                
+                // Abre a página de conselhos diretamente sem travar na mesma aba
+                window.location.replace("conselho.html");
+            } else {
+                statusBox.innerText = "Erro: Digite exatamente 'OK' para liberar.";
+                statusBox.style.color = "#ef4444";
+            }
+        }
+    </script>
+</body>
+</html>
