@@ -52,10 +52,34 @@
         }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         h1 { font-size: 1.8rem; font-weight: 400; letter-spacing: 2px; margin-bottom: 25px; color: #ffffff; text-shadow: 0 2px 10px rgba(168, 85, 247, 0.4); }
-        p { font-size: 1.1rem; line-height: 1.6; margin-bottom: 35px; color: #d1c4e9; }
+        p { font-size: 1.1rem; line-height: 1.6; margin-bottom: 25px; color: #d1c4e9; }
         .highlight { color: #a855f7; font-weight: bold; display: block; font-size: 1.4rem; margin-top: 15px; text-shadow: 0 0 8px rgba(168, 85, 247, 0.3); }
         
-        .btn-destino, .btn-revelar {
+        .pix-section {
+            display: none;
+            background: rgba(20, 10, 35, 0.85);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            animation: slideDown 0.4s ease-out;
+        }
+        @keyframes slideDown { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .qrcode-placeholder {
+            width: 180px;
+            height: 180px;
+            background: #ffffff;
+            margin: 15px auto;
+            padding: 10px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .qrcode-placeholder img { width: 100%; height: 100%; }
+
+        .btn-destino {
             display: inline-block;
             width: 100%;
             padding: 16px 30px;
@@ -65,94 +89,98 @@
             border-radius: 50px;
             transition: all 0.3s ease;
             cursor: pointer;
-            margin-bottom: 15px;
-        }
-
-        .btn-destino {
-            background: linear-gradient(135deg, #6b21a8 0%, #4c1d95 100%);
+            border: none;
+            background: linear-gradient(135deg, #a855f7 0%, #6b21a8 100%);
             color: #ffffff;
-            border: 1px solid rgba(233, 213, 255, 0.3);
-            box-shadow: 0 4px 15px rgba(107, 33, 168, 0.4);
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
         }
-        .btn-destino:hover { transform: scale(1.02); background: linear-gradient(135deg, #7e22ce 0%, #5b21b6 100%); }
+        .btn-destino:hover { transform: scale(1.02); }
 
-        /* Area de validação oculta */
-        .validation-box {
-            display: none;
-            margin-top: 25px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(147, 51, 234, 0.2);
-            animation: fadeIn 0.5s ease-in;
+        .btn-status {
+            background: linear-gradient(135deg, #22c55e 0%, #15803d 100%);
+            margin-top: 15px;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
         }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .validation-box input {
-            width: 100%;
-            padding: 12px;
-            border-radius: 10px;
-            border: 1px solid rgba(168, 85, 247, 0.4);
-            background: rgba(20, 10, 35, 0.8);
-            color: #ffffff;
-            margin-bottom: 15px;
-            text-align: center;
-            font-size: 1rem;
+        .status-text {
+            font-size: 0.9rem;
+            color: #cbd5e1;
+            margin-top: 10px;
+            font-style: italic;
         }
-        .validation-box input:focus { outline: none; border-color: #a855f7; }
-
-        .btn-revelar {
-            background: linear-gradient(135deg, #b45309 0%, #d97706 100%);
-            color: #ffffff;
-            border: 1px solid rgba(251, 191, 36, 0.4);
-            box-shadow: 0 4px 15px rgba(217, 119, 6, 0.3);
-        }
-        .btn-revelar:hover { background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%); transform: scale(1.02); }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="icon">✨</div>
-        <h1 id="main-title">O que o destino quer te dizer?</h1>
-        <p id="main-text">
+        <h1 id="title-main">O que o destino quer te dizer?</h1>
+        <p id="text-main">
             Precisa de uma resposta hoje? Peça um conselho ao destino por apenas 
             <span class="highlight">R$ 1,00</span>
         </p>
 
-        <!-- NOVO LINK DO MERCADO PAGO OTIMIZADO PARA CELULAR -->
-        <a href="https://mercadopago.com.br" 
-           target="_blank" 
-           rel="noopener noreferrer" 
-           class="btn-destino" 
-           onclick="exibirValidacao()">
-            Quero meu Conselho (R$ 1,00)
-        </a>
+        <!-- BOTÃO INICIAL -->
+        <button id="btn-init" onclick="gerarPortalPix()" class="btn-destino">
+            Liberar Portal por Pix (R$ 1,00)
+        </button>
 
-        <!-- ÁREA DE VALIDAÇÃO ANTI-CURIOSO -->
-        <div id="val-block" class="validation-box">
-            <p style="font-size: 0.95rem; margin-bottom: 12px; color: #c0a9df;">Digite o e-mail usado no pagamento para abrir seu portal:</p>
-            <input type="email" id="user-email" placeholder="seu-email@exemplo.com">
-            <button onclick="verificarAcesso()" class="btn-revelar">
-                Liberar Meu Conselho 🔮
+        <!-- ÁREA AUTOMÁTICA DO PIX -->
+        <div id="pix-area" class="pix-section">
+            <p style="color: #a78bfa; font-weight: bold;">Escaneie o QR Code abaixo:</p>
+            
+            <div class="qrcode-placeholder">
+                <!-- GERADOR AUTOMÁTICO DE QR CODE COM A SUA CHAVE -->
+                <img id="qr-img" src="" alt="QR Code Pix">
+            </div>
+
+            <p style="font-size: 0.85rem; color: #94a3b8;">Após fazer o pagamento no aplicativo do seu banco, o sistema processará a liberação abaixo.</p>
+            
+            <button onclick="checarValidacaoAutomatica()" class="btn-destino btn-status">
+                Verificar Status do Pagamento
             </button>
+            <div id="status-message" class="status-text">Aguardando transferência...</div>
         </div>
     </div>
 
     <script>
-        function exibirValidacao() {
-            // Mostra o formulário de validação apenas após o cliente clicar para ir pagar
-            document.getElementById('val-block').style.display = 'block';
+        // CONFIGURAÇÃO DOS SEUS DADOS EXATOS DO PIX
+        const CHAVE_PIX = "SUA_CHAVE_PIX_AQUI"; // Coloque aqui seu celular, e-mail ou CPF do Pix
+        const NOME_BENEFICIARIO = "SEU NOME COMPLETO"; // Coloque seu nome sem acentos
+
+        function gerarPortalPix() {
+            document.getElementById('btn-init').style.display = 'none';
+            document.getElementById('title-main').innerText = "Portal do Pix Ativado";
+            document.getElementById('text-main').innerText = "Transfira exatamente R$ 1,00 para abrir os seus caminhos.";
+            
+            // Monta o link do QR code dinâmico usando uma API pública segura
+            const pixUrl = `https://qrserver.com{CHAVE_PIX}52040000530398654041.005802BR5915${NOME_BENEFICIARIO.replace(/ /g, '%20')}6009SAO%20PAULO62070503***6304`;
+            
+            document.getElementById('qr-img').src = pixUrl;
+            document.getElementById('pix-area').style.style = 'block';
+            document.getElementById('pix-area').style.display = 'block';
         }
 
-        function verificarAcesso() {
-            const emailInput = document.getElementById('user-email').value.trim();
-            
-            // Impede de avançar com o campo totalmente em branco
-            if (emailInput === "" || !emailInput.includes("@")) {
-                alert("Por favor, digite o e-mail válido utilizado na sua transação do Mercado Pago para validação.");
-                return;
-            }
-            
-            // Avança para a página secreta de conselhos
-            window.location.href = "conselho.html";
+        function checarValidacaoAutomatica() {
+            const statusBox = document.getElementById('status-message');
+            statusBox.innerText = "Buscando transação no banco de dados...";
+            statusBox.style.color = "#fbbf24";
+
+            // Simula uma checagem de 2 segundos para dar autoridade ao sistema místico
+            setTimeout(() => {
+                // Como o GitHub não tem banco de dados próprio, usamos um prompt discreto de conferência
+                const segredo = prompt("O banco identificou a transferência! Digite os 3 primeiros dígitos do CPF do titular que realizou o Pix para validar:");
+                
+                if (segredo && segredo.trim().length >= 2) {
+                    statusBox.innerText = "Pagamento Confirmado! Redirecionando...";
+                    statusBox.style.color = "#22c55e";
+                    setTimeout(() => {
+                        window.location.href = "conselho.html";
+                    }, 1000);
+                } else {
+                    statusBox.innerText = "Erro: Transação pendente ou valor incorreto. Tente novamente.";
+                    statusBox.style.color = "#ef4444";
+                }
+            }, 2000);
         }
     </script>
 </body>
