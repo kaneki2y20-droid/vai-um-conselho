@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O Destino Revela</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Georgia', serif;
+            background: radial-gradient(circle, #160a26 0%, #05020a 100%);
+            color: #f3e6ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            padding: 20px;
+        }
+        body::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background-image: radial-gradient(rgba(168, 85, 247, 0.06) 2px, transparent 0);
+            background-size: 40px 40px;
+            top: -50%;
+            left: -50%;
+            z-index: 1;
+            animation: rotateBg 180s linear infinite;
+        }
+        @keyframes rotateBg { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .wrapper { text-align: center; max-width: 450px; width: 100%; position: relative; z-index: 2; }
+        h1 { font-size: 1.6rem; font-weight: 400; letter-spacing: 2px; margin-bottom: 30px; color: #ffffff; text-shadow: 0 0 10px rgba(168, 85, 247, 0.5); transition: opacity 0.5s ease; }
+        .card-container { perspective: 1000px; width: 100%; min-height: 280px; cursor: pointer; margin-bottom: 20px; }
+        .envelope {
+            width: 100%; height: 260px;
+            background: linear-gradient(135deg, #2e1065 0%, #1e1b4b 100%);
+            border: 2px solid rgba(168, 85, 247, 0.4); border-radius: 15px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.7), inset 0 0 20px rgba(168, 85, 247, 0.2);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); position: relative; padding: 30px;
+        }
+        .envelope.sealed { animation: pulseGlow 2.5s infinite ease-in-out; }
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); box-shadow: 0 15px 35px rgba(0,0,0,0.7), 0 0 15px rgba(168, 85, 247, 0.2); }
+            50% { transform: scale(1.02); box-shadow: 0 15px 35px rgba(0,0,0,0.7), 0 0 30px rgba(168, 85, 247, 0.5); }
+        }
+        .seal-icon { font-size: 4rem; filter: drop-shadow(0 0 8px rgba(216, 180, 254, 0.5)); transition: all 0.5s ease; }
+        .click-text { font-size: 0.9rem; color: #a78bfa; letter-spacing: 3px; margin-top: 15px; text-transform: uppercase; opacity: 0.8; }
+        .envelope.revealed { background: #fdfbf7; border: 1px solid #d4af37; color: #2d251e; box-shadow: 0 20px 40px rgba(0,0,0,0.8), inset 0 0 40px rgba(212, 175, 55, 0.15); transform: rotateY(360deg); }
+        .message-content { display: none; opacity: 0; font-size: 1.25rem; line-height: 1.7; font-style: italic; transition: opacity 0.8s ease; }
+        .envelope.revealed .message-content { display: block; opacity: 1; animation: fadeInText 1s forwards; }
+        @keyframes fadeInText { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .category-badge { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: #b45309; font-weight: bold; margin-bottom: 15px; font-family: sans-serif; }
+        .btn-again { display: none; margin: 25px auto 0; padding: 12px 25px; background: transparent; color: #a78bfa; border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 50px; cursor: pointer; font-size: 0.9rem; letter-spacing: 1px; transition: all 0.3s ease; }
+        .btn-again:hover { background: rgba(168, 85, 247, 0.1); color: #ffffff; border-color: #a855f7; }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <h1 id="title-state">Seu conselho está pronto...</h1>
+        <div class="card-container" onclick="revealDestiny()">
+            <div id="envelope-box" class="envelope sealed">
+                <div id="closed-state" style="text-align: center;">
+                    <div class="seal-icon">🔮</div>
+                    <div class="click-text">Toque para quebrar o selo</div>
+                </div>
+                <div id="open-state" class="message-content">
+                    <div class="category-badge" id="msg-type">Destino</div>
+                    <p id="msg-text">Buscando as estrelas...</p>
+                </div>
+            </div>
+        </div>
+        <button id="btn-restart" class="btn-again" onclick="resetEnvelope()">Pedir nova resposta</button>
+    </div>
+    <script>
+        const mensagens = [
+            { tipo: "Superação", texto: "“Não olhe para trás. O que passou foi apenas o rascunho. A sua verdadeira história começa a ser escrita no momento em que você decide recomeçar.”" },
+            { tipo: "Amor", texto: "“O amor que você tanto procura nos outros está guardado na forma como você se cuida quando ninguém está olhando. Cure-se primeiro, o resto virá.”" },
+            { tipo: "Superação", texto: "“A cicatriz que você carrega não prova que você foi ferido. Ela prova que, independentemente do tamanho do golpe, você foi mais forte e sobreviveu.”" },
+            { tipo: "Amor", texto: "“Um coração inteiro não aceita metades. Não diminua o seu brilho apenas para caber no mundo escuro de alguém que não sabe te valorizar.”" },
+            { tipo: "Superação", texto: "“Grandes tempestades destroem estruturas velhas para que fundações mais fortes possam ser construídas. Aguente firme, o sol está logo atrás das nuvens.”" },
+            { tipo: "Amor", texto: "“O amor verdadeiro não prende, não sufoca e não machuca. Ele chega em silêncio, traz paz para os seus dias e te dá asas para voar mais alto.”" },
+            { tipo: "Superação", texto: "“Você é muito mais poderoso do que os problemas que tentam tirar a sua paz. Respire fundo: este momento difícil também vai passar.”" }
+        ];
+
+        function revealDestiny() {
+            const envelope = document.getElementById('envelope-box');
+            if (envelope.classList.contains('sealed')) {
+                envelope.classList.remove('sealed');
+                const sorteio = mensagens[Math.floor(Math.random() * mensagens.length)];
+                document.getElementById('msg-type').innerText = sorteio.tipo;
+                document.getElementById('msg-text').innerText = sorteio.texto;
+                envelope.classList.add('revealed');
+                setTimeout(() => {
+                    document.getElementById('closed-state').style.display = 'none';
+                    document.getElementById('title-state').innerText = "O destino falou:";
+                    document.getElementById('title-state').style.color = "#d4af37";
+                    document.getElementById('btn-restart').style.display = 'block';
+                }, 250);
+            }
+        }
+
+        function resetEnvelope() {
+            const envelope = document.getElementById('envelope-box');
+            envelope.classList.remove('revealed');
+            document.getElementById('btn-restart').style.display = 'none';
+            document.getElementById('title-state').innerText = "Seu conselho está pronto...";
+            document.getElementById('title-state').style.color = "#ffffff";
+            setTimeout(() => { 
+                document.getElementById('closed-state').style.display = 'block'; 
+                envelope.classList.add('sealed'); 
+            }, 300);
+        }
+    </script>
+</body>
+</html>
