@@ -76,14 +76,36 @@
         }
         .btn-destino:hover { transform: scale(1.02); background: linear-gradient(135deg, #7e22ce 0%, #5b21b6 100%); }
 
-        .btn-revelar {
-            background: transparent;
-            color: #d4af37;
-            border: 2px solid #d4af37;
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
-            display: none; /* Escondido no início */
+        /* Area de validação oculta */
+        .validation-box {
+            display: none;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(147, 51, 234, 0.2);
+            animation: fadeIn 0.5s ease-in;
         }
-        .btn-revelar:hover { background: rgba(212, 175, 55, 0.1); transform: scale(1.02); }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .validation-box input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(168, 85, 247, 0.4);
+            background: rgba(20, 10, 35, 0.8);
+            color: #ffffff;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1rem;
+        }
+        .validation-box input:focus { outline: none; border-color: #a855f7; }
+
+        .btn-revelar {
+            background: linear-gradient(135deg, #b45309 0%, #d97706 100%);
+            color: #ffffff;
+            border: 1px solid rgba(251, 191, 36, 0.4);
+            box-shadow: 0 4px 15px rgba(217, 119, 6, 0.3);
+        }
+        .btn-revelar:hover { background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%); transform: scale(1.02); }
     </style>
 </head>
 <body>
@@ -95,29 +117,42 @@
             <span class="highlight">R$ 1,00</span>
         </p>
 
-        <!-- BOTÃO DE PAGAMENTO (Abre direto o link limpo) -->
+        <!-- NOVO LINK DO MERCADO PAGO OTIMIZADO PARA CELULAR -->
         <a href="https://mercadopago.com.br" 
            target="_blank" 
            rel="noopener noreferrer" 
            class="btn-destino" 
-           onclick="liberarBotao()">
-            Clique aqui para pagar R$ 1,00
+           onclick="exibirValidacao()">
+            Quero meu Conselho (R$ 1,00)
         </a>
 
-        <!-- BOTÃO SECRETO (Aparece após o clique para levar ao conselho) -->
-        <a href="conselho.html" id="btn-secret" class="btn-revelar">
-            Já paguei! Ver meu Conselho 🔮
-        </a>
+        <!-- ÁREA DE VALIDAÇÃO ANTI-CURIOSO -->
+        <div id="val-block" class="validation-box">
+            <p style="font-size: 0.95rem; margin-bottom: 12px; color: #c0a9df;">Digite o e-mail usado no pagamento para abrir seu portal:</p>
+            <input type="email" id="user-email" placeholder="seu-email@exemplo.com">
+            <button onclick="verificarAcesso()" class="btn-revelar">
+                Liberar Meu Conselho 🔮
+            </button>
+        </div>
     </div>
 
     <script>
-        function liberarBotao() {
-            // Quando o cliente clica para pagar, o site libera o botão de destino após 3 segundos
-            setTimeout(() => {
-                document.getElementById('btn-secret').style.display = 'inline-block';
-                document.getElementById('main-title').innerText = "Pagamento Realizado?";
-                document.getElementById('main-text').innerText = "Se você já concluiu o pagamento na outra aba, clique abaixo para abrir seu portal.";
-            }, 3000);
+        function exibirValidacao() {
+            // Mostra o formulário de validação apenas após o cliente clicar para ir pagar
+            document.getElementById('val-block').style.display = 'block';
+        }
+
+        function verificarAcesso() {
+            const emailInput = document.getElementById('user-email').value.trim();
+            
+            // Impede de avançar com o campo totalmente em branco
+            if (emailInput === "" || !emailInput.includes("@")) {
+                alert("Por favor, digite o e-mail válido utilizado na sua transação do Mercado Pago para validação.");
+                return;
+            }
+            
+            // Avança para a página secreta de conselhos
+            window.location.href = "conselho.html";
         }
     </script>
 </body>
