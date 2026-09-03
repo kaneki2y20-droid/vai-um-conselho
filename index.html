@@ -139,11 +139,6 @@
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
         }
-        .pix-copia-cola:hover {
-            background: rgba(168, 85, 247, 0.1);
-            border-color: #a855f7;
-            color: #ffffff;
-        }
     </style>
 </head>
 <body>
@@ -155,12 +150,10 @@
             <span class="highlight">R$ 1,00</span>
         </p>
 
-        <!-- BOTÃO INICIAL -->
         <button id="btn-init" onclick="gerarPortalPix()" class="btn-destino">
             Liberar Portal por Pix (R$ 1,00)
         </button>
 
-        <!-- ÁREA AUTOMÁTICA DO PIX -->
         <div id="pix-area" class="pix-section">
             <p style="color: #a78bfa; font-weight: bold;">Opção 1: Escaneie o QR Code</p>
             
@@ -194,19 +187,16 @@
             
             const pixUrl = `https://qrserver.com{encodeURIComponent(pixPayload)}`;
             document.getElementById('qr-img').src = pixUrl;
-            document.getElementById('pix-area').style.display = 'block'; // CORRIGIDO AQUI
+            document.getElementById('pix-area').style.display = 'block';
         }
 
         function copiarCopiaCola() {
             navigator.clipboard.writeText(pixPayload);
             const box = document.getElementById('chave-texto');
             box.innerText = "¡Código Pix Copiado com Sucesso!";
-            box.style.borderColor = "#22c55e";
             box.style.color = "#22c55e";
-            
             setTimeout(() => {
                 box.innerText = pixPayload;
-                box.style.borderColor = "rgba(168, 85, 247, 0.6)";
                 box.style.color = "#d1c4e9";
             }, 2000);
         }
@@ -217,29 +207,268 @@
             statusBox.style.color = "#fbbf24";
 
             setTimeout(() => {
-                const entrada = prompt("Sistema integrado! Para validar seu Pix de R$ 1,00 e abrir o portal, digite as duas primeiras letras do seu nome (Maiúsculas ou Minúsculas):");
+                const entrada = prompt("Sistema integrado! Para validar seu Pix de R$ 1,00, digite as iniciais OK para prosseguir:");
                 
                 if (!entrada) {
-                    statusBox.innerText = "Operação cancelada pelo usuário.";
+                    statusBox.innerText = "Operação cancelada.";
                     statusBox.style.color = "#ef4444";
                     return;
                 }
 
-                const inputLimpo = entrada.trim().toUpperCase(); // Converte para maiúsculas para evitar erro de digitação
+                const inputLimpo = entrada.trim().toUpperCase();
                 
-                // SENHA PADRÃO: Substituí a verificação de CPF por uma palavra ou sigla que você escolher.
-                // Atualmente o site vai liberar o acesso APENAS se a pessoa digitar as letras "OK".
                 if (inputLimpo === "OK") { 
-                    statusBox.innerText = "Pagamento Confirmado! Abrindo portal...";
+                    statusBox.innerText = "Pagamento Confirmado! Redirecionando...";
                     statusBox.style.color = "#22c55e";
+                    
+                    // REDIRECIONAMENTO CORRIGIDO: Força a busca relativa do arquivo independente de pastas do GitHub
                     setTimeout(() => {
-                        window.location.href = "conselho.html";
-                    }, 1000);
+                        window.location.href = "./conselho.html";
+                    }, 800);
                 } else {
-                    statusBox.innerText = "Erro: Chave Pix não localizada. Tente novamente em 2 minutos.";
+                    statusBox.innerText = "Erro: Transação pendente. Verifique o valor.";
                     statusBox.style.color = "#ef4444";
-                    alert("A validação falhou. Certifique-se de que o Pix foi concluído e digite as letras de verificação corretamente.");
+                    alert("A validação falhou. Digite exatamente OK para liberar caso o Pix já tenha sido feito.");
                 }
-            }, 1500);
+            }, 1200);
         }
     </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conselho do Destino</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Georgia', serif;
+            background: radial-gradient(circle, #1a0b2e 0%, #080311 100%);
+            color: #f3e6ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            padding: 20px;
+        }
+        body::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background-image: radial-gradient(rgba(147, 51, 234, 0.07) 2px, transparent 0);
+            background-size: 30px 30px;
+            top: -50%;
+            left: -50%;
+            z-index: 1;
+            animation: rotateBg 120s linear infinite;
+        }
+        @keyframes rotateBg { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .container {
+            text-align: center;
+            max-width: 450px;
+            width: 100%;
+            padding: 40px 30px;
+            background: rgba(15, 7, 28, 0.7);
+            border: 1px solid rgba(147, 51, 234, 0.25);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(147, 51, 234, 0.15);
+            position: relative;
+            z-index: 2;
+        }
+        .icon {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            color: #d8b4fe;
+            filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.6));
+            animation: float 4s ease-in-out infinite;
+        }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        h1 { font-size: 1.8rem; font-weight: 400; letter-spacing: 2px; margin-bottom: 25px; color: #ffffff; text-shadow: 0 2px 10px rgba(168, 85, 247, 0.4); }
+        p { font-size: 1.1rem; line-height: 1.6; margin-bottom: 25px; color: #d1c4e9; }
+        .highlight { color: #a855f7; font-weight: bold; display: block; font-size: 1.4rem; margin-top: 15px; text-shadow: 0 0 8px rgba(168, 85, 247, 0.3); }
+        
+        .pix-section {
+            display: none;
+            background: rgba(20, 10, 35, 0.85);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            animation: slideDown 0.4s ease-out;
+        }
+        @keyframes slideDown { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .qrcode-placeholder {
+            width: 180px;
+            height: 180px;
+            background: #ffffff;
+            margin: 15px auto;
+            padding: 10px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .qrcode-placeholder img { width: 100%; height: 100%; }
+
+        .btn-destino {
+            display: inline-block;
+            width: 100%;
+            padding: 16px 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            background: linear-gradient(135deg, #a855f7 0%, #6b21a8 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+        }
+        .btn-destino:hover { transform: scale(1.02); }
+
+        .btn-status {
+            background: linear-gradient(135deg, #22c55e 0%, #15803d 100%);
+            margin-top: 15px;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+        }
+
+        .status-text {
+            font-size: 0.9rem;
+            color: #cbd5e1;
+            margin-top: 10px;
+            font-style: italic;
+        }
+        
+        .click-notice {
+            font-size: 0.85rem;
+            color: #f59e0b;
+            font-weight: bold;
+            margin-top: 15px;
+            animation: blink 1.5s infinite;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        @keyframes blink { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
+
+        .pix-copia-cola {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px dashed rgba(168, 85, 247, 0.6);
+            padding: 12px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: #d1c4e9;
+            border-radius: 8px;
+            word-break: break-all;
+            margin: 8px 0 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            max-height: 75px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">✨</div>
+        <h1 id="title-main">O que o destino quer te dizer?</h1>
+        <p id="text-main">
+            Precisa de uma resposta hoje? Peça um conselho ao destino por apenas 
+            <span class="highlight">R$ 1,00</span>
+        </p>
+
+        <button id="btn-init" onclick="gerarPortalPix()" class="btn-destino">
+            Liberar Portal por Pix (R$ 1,00)
+        </button>
+
+        <div id="pix-area" class="pix-section">
+            <p style="color: #a78bfa; font-weight: bold;">Opção 1: Escaneie o QR Code</p>
+            
+            <div class="qrcode-placeholder">
+                <img id="qr-img" src="" alt="QR Code Pix">
+            </div>
+
+            <div class="click-notice">Opção 2: 👇 Clique abaixo para Copiar o Pix Copia e Cola 👇</div>
+            <div class="pix-copia-cola" onclick="copiarCopiaCola()" id="chave-texto">Carregando código Pix...</div>
+
+            <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 20px;">Após concluir o pagamento de R$ 1,00 no seu banco, clique no botão abaixo para liberar seu acesso.</p>
+            
+            <button onclick="checarValidacaoAutomatica()" class="btn-destino btn-status">
+                Verificar Status do Pagamento
+            </button>
+            <div id="status-message" class="status-text">Aguardando transferência...</div>
+        </div>
+    </div>
+
+    <script>
+        const CHAVE_PIX = "kaneki2y20@gmail.com";
+        const NOME_BENEFICIARIO = "DESTINO";
+        
+        const pixPayload = `00020101021126430014br.gov.bcb.pix0121${CHAVE_PIX}52040000530398654041.005802BR5907${NOME_BENEFICIARIO}6009SAO%20PAULO62070503***6304`;
+
+        function gerarPortalPix() {
+            document.getElementById('btn-init').style.display = 'none';
+            document.getElementById('title-main').innerText = "Portal do Pix Ativado";
+            document.getElementById('text-main').innerText = "Escolha a melhor forma de pagar R$ 1,00 para abrir os seus caminhos.";
+            document.getElementById('chave-texto').innerText = pixPayload;
+            
+            const pixUrl = `https://qrserver.com{encodeURIComponent(pixPayload)}`;
+            document.getElementById('qr-img').src = pixUrl;
+            document.getElementById('pix-area').style.display = 'block';
+        }
+
+        function copiarCopiaCola() {
+            navigator.clipboard.writeText(pixPayload);
+            const box = document.getElementById('chave-texto');
+            box.innerText = "¡Código Pix Copiado com Sucesso!";
+            box.style.color = "#22c55e";
+            setTimeout(() => {
+                box.innerText = pixPayload;
+                box.style.color = "#d1c4e9";
+            }, 2000);
+        }
+
+        function checarValidacaoAutomatica() {
+            const statusBox = document.getElementById('status-message');
+            statusBox.innerText = "Verificando transações bancárias...";
+            statusBox.style.color = "#fbbf24";
+
+            setTimeout(() => {
+                const entrada = prompt("Sistema integrado! Para validar seu Pix de R$ 1,00, digite as iniciais OK para prosseguir:");
+                
+                if (!entrada) {
+                    statusBox.innerText = "Operação cancelada.";
+                    statusBox.style.color = "#ef4444";
+                    return;
+                }
+
+                const inputLimpo = entrada.trim().toUpperCase();
+                
+                if (inputLimpo === "OK") { 
+                    statusBox.innerText = "Pagamento Confirmado! Redirecionando...";
+                    statusBox.style.color = "#22c55e";
+                    
+                    // REDIRECIONAMENTO CORRIGIDO: Força a busca relativa do arquivo independente de pastas do GitHub
+                    setTimeout(() => {
+                        window.location.href = "./conselho.html";
+                    }, 800);
+                } else {
+                    statusBox.innerText = "Erro: Transação pendente. Verifique o valor.";
+                    statusBox.style.color = "#ef4444";
+                    alert("A validação falhou. Digite exatamente OK para liberar caso o Pix já tenha sido feito.");
+                }
+            }, 1200);
+        }
+    </script>
+</body>
+</html>
