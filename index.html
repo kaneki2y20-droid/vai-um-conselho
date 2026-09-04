@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conselho do Destino</title>
+    <title>Vai um conselho aí?</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -144,9 +144,9 @@
 <body>
     <div class="container">
         <div class="icon">✨</div>
-        <h1 id="title-main">O que o destino quer te dizer?</h1>
+        <h1 id="title-main">Vai um conselho aí?</h1>
         <p id="text-main">
-            Precisa de uma resposta hoje? Peça um conselho ao destino por apenas 
+            Aqui está a mensagem que você precisa por apenas 
             <span class="highlight">R$ 1,00</span>
         </p>
 
@@ -175,7 +175,7 @@
 
     <script>
         const CHAVE_PIX = "kaneki2y20@gmail.com";
-        const pixPayload = `00020101021126430014br.gov.bcb.pix0121${CHAVE_PIX}52040000530398654041.005802BR5907DESTINO6009SAO%20PAULO62070503***6304`;
+        const pixPayload = `00020101021126430014br.gov.bcb.pix0121${CHAVE_PIX}52040000530398654041.005802BR5907CONSELHO6009SAO%20PAULO62070503***6304`;
 
         function gerarPortalPix() {
             document.getElementById('btn-init').style.display = 'none';
@@ -199,22 +199,38 @@
             }, 2000);
         }
 
+        function gerarCalculoChave(texto) {
+            let resultado = 0;
+            for (let i = 0; i < texto.length; i++) {
+                resultado = (resultado << 5) - resultado + texto.charCodeAt(i);
+                resultado |= 0;
+            }
+            return resultado;
+        }
+
         function checarValidacaoAutomatica() {
             const statusBox = document.getElementById('status-message');
             const entrada = document.getElementById('codigo-acesso').value;
 
-            statusBox.innerText = "Verificando...";
+            statusBox.innerText = "Consultando banco de dados...";
             
+            if (!entrada || entrada.trim() === "") {
+                statusBox.innerText = "Erro: Campo vazio. Digite o código de liberação.";
+                statusBox.style.color = "#ef4444";
+                return;
+            }
+
             const inputLimpo = entrada.trim().toUpperCase();
+            const calculoMatematico = gerarCalculoChave(inputLimpo);
             
-            if (inputLimpo === "OK") { 
-                statusBox.innerText = "Confirmado! Entrando...";
+            if (calculoMatematico === 2524) { 
+                statusBox.innerText = "Transação Localizada! Entrando...";
                 statusBox.style.color = "#22c55e";
-                
-                // Abre a página de conselhos diretamente sem travar na mesma aba
-                window.location.replace("conselho.html");
+                setTimeout(function() {
+                    window.location.replace("conselho.html");
+                }, 800);
             } else {
-                statusBox.innerText = "Erro: Digite exatamente 'OK' para liberar.";
+                statusBox.innerText = "Erro: Pix de R$ 1,00 não localizado para este código.";
                 statusBox.style.color = "#ef4444";
             }
         }
