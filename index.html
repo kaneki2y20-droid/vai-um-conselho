@@ -94,17 +94,15 @@
         }
         .btn-destino:hover { transform: scale(1.02); }
 
-        /* Botão de Verificação Modificado com Timer */
         .btn-status {
             background: #475569;
             margin-top: 20px;
             box-shadow: none;
             color: #94a3b8;
             cursor: not-allowed;
-            pointer-events: none; /* Bloqueia o clique no início */
+            pointer-events: none;
         }
 
-        /* Botão Ativo após o tempo acabar */
         .btn-status.ready {
             background: linear-gradient(135deg, #22c55e 0%, #15803d 100%);
             color: #ffffff;
@@ -166,7 +164,6 @@
 
             <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 25px;">O sistema está aguardando a confirmação do Pix de R$ 1,00 enviado ao banco.</p>
             
-            <!-- BOTÃO RECONFIGURADO COM TRAVA DE TEMPO -->
             <button id="btn-verificar" onclick="irParaMensagem()" class="btn-destino btn-status">
                 Processando... (120s)
             </button>
@@ -175,9 +172,9 @@
     </div>
 
     <script>
-        const CHAVE_PIX = "kaneki2y20@gmail.com";
-        const pixPayload = `00020101021126430014br.gov.bcb.pix0121${CHAVE_PIX}52040000530398654041.005802BR5907CONSELHO6009SAO%20PAULO62070503***6304`;
-        let tempoRestante = 120; // Tempo configurado para 2 minutos (120 segundos)
+        // CÓDIGO CORRIGIDO COM E-MAIL (E PARÂMETROS DE CRC REESTRUTURADOS)
+        const pixPayload = "00020101021126430014br.gov.bcb.pix0121kaneki2y20@gmail.com52040000530398654041.005802BR5907ALEX610606009SAO%20PAULO62070503***63046757";
+        let tempoRestante = 120;
         let cronometro;
 
         function gerarPortalPix() {
@@ -190,7 +187,6 @@
             document.getElementById('qr-img').src = pixUrl;
             document.getElementById('pix-area').style.display = 'block';
 
-            // Inicia a contagem regressiva de segurança
             iniciarContagem();
         }
 
@@ -205,7 +201,7 @@
                 if (tempoRestante <= 0) {
                     clearInterval(cronometro);
                     botao.innerText = "Liberar Meu Acesso 🔮";
-                    botao.classList.add('ready'); // Transforma o botão em verde e clicável
+                    botao.classList.add('ready');
                     statusBox.innerText = "Transferência processada com sucesso!";
                     statusBox.style.color = "#22c55e";
                 }
@@ -224,7 +220,6 @@
         }
 
         function irParaMensagem() {
-            // Só executa o redirecionamento se o tempo já tiver acabado e o botão estiver ativo
             window.location.replace("conselho.html");
         }
     </script>
