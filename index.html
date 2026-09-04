@@ -94,9 +94,22 @@
         }
         .btn-destino:hover { transform: scale(1.02); }
 
+        /* Botão de Verificação Modificado com Timer */
         .btn-status {
+            background: #475569;
+            margin-top: 20px;
+            box-shadow: none;
+            color: #94a3b8;
+            cursor: not-allowed;
+            pointer-events: none; /* Bloqueia o clique no início */
+        }
+
+        /* Botão Ativo após o tempo acabar */
+        .btn-status.ready {
             background: linear-gradient(135deg, #22c55e 0%, #15803d 100%);
-            margin-top: 15px;
+            color: #ffffff;
+            cursor: pointer;
+            pointer-events: auto;
             box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
         }
 
@@ -127,18 +140,6 @@
             word-break: break-all;
             cursor: pointer;
         }
-
-        .input-verificacao {
-            width: 100%;
-            padding: 12px;
-            border-radius: 10px;
-            border: 1px solid rgba(168, 85, 247, 0.4);
-            background: rgba(0, 0, 0, 0.3);
-            color: #ffffff;
-            margin-top: 12px;
-            text-align: center;
-            font-size: 1rem;
-        }
     </style>
 </head>
 <body>
@@ -163,19 +164,21 @@
             <div class="click-notice">👇 Clique abaixo para Copiar o Código 👇</div>
             <div class="pix-copia-cola" onclick="copiarCopiaCola()" id="chave-texto">Carregando...</div>
 
-            <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 25px;">Após pagar, digite a palavra de liberação abaixo:</p>
-            <input type="text" id="codigo-acesso" class="input-verificacao" placeholder="Digite aqui a palavra de liberação">
+            <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 25px;">O sistema está aguardando a confirmação do Pix de R$ 1,00 enviado ao banco.</p>
             
-            <button onclick="checarValidacaoAutomatica()" class="btn-destino btn-status">
-                Liberar Meu Acesso 🔮
+            <!-- BOTÃO RECONFIGURADO COM TRAVA DE TEMPO -->
+            <button id="btn-verificar" onclick="irParaMensagem()" class="btn-destino btn-status">
+                Processando... (120s)
             </button>
-            <div id="status-message" class="status-text">Aguardando verificação...</div>
+            <div id="status-message" class="status-text">Aguardando transferência...</div>
         </div>
     </div>
 
     <script>
         const CHAVE_PIX = "kaneki2y20@gmail.com";
         const pixPayload = `00020101021126430014br.gov.bcb.pix0121${CHAVE_PIX}52040000530398654041.005802BR5907CONSELHO6009SAO%20PAULO62070503***6304`;
+        let tempoRestante = 120; // Tempo configurado para 2 minutos (120 segundos)
+        let cronometro;
 
         function gerarPortalPix() {
             document.getElementById('btn-init').style.display = 'none';
@@ -186,6 +189,27 @@
             const pixUrl = "https://qrserver.com" + encodeURIComponent(pixPayload);
             document.getElementById('qr-img').src = pixUrl;
             document.getElementById('pix-area').style.display = 'block';
+
+            // Inicia a contagem regressiva de segurança
+            iniciarContagem();
+        }
+
+        function iniciarContagem() {
+            const botao = document.getElementById('btn-verificar');
+            const statusBox = document.getElementById('status-message');
+
+            cronometro = setInterval(function() {
+                tempoRestante--;
+                botao.innerText = "Verificando Pix... (" + tempoRestante + "s)";
+                
+                if (tempoRestante <= 0) {
+                    clearInterval(cronometro);
+                    botao.innerText = "Liberar Meu Acesso 🔮";
+                    botao.classList.add('ready'); // Transforma o botão em verde e clicável
+                    statusBox.innerText = "Transferência processada com sucesso!";
+                    statusBox.style.color = "#22c55e";
+                }
+            }, 1000);
         }
 
         function copiarCopiaCola() {
@@ -199,40 +223,9 @@
             }, 2000);
         }
 
-        function gerarCalculoChave(texto) {
-            let resultado = 0;
-            for (let i = 0; i < texto.length; i++) {
-                resultado = (resultado << 5) - resultado + texto.charCodeAt(i);
-                resultado |= 0;
-            }
-            return resultado;
-        }
-
-        function checarValidacaoAutomatica() {
-            const statusBox = document.getElementById('status-message');
-            const entrada = document.getElementById('codigo-acesso').value;
-
-            statusBox.innerText = "Consultando banco de dados...";
-            
-            if (!entrada || entrada.trim() === "") {
-                statusBox.innerText = "Erro: Campo vazio. Digite o código de liberação.";
-                statusBox.style.color = "#ef4444";
-                return;
-            }
-
-            const inputLimpo = entrada.trim().toUpperCase();
-            const calculoMatematico = gerarCalculoChave(inputLimpo);
-            
-            if (calculoMatematico === 2524) { 
-                statusBox.innerText = "Transação Localizada! Entrando...";
-                statusBox.style.color = "#22c55e";
-                setTimeout(function() {
-                    window.location.replace("conselho.html");
-                }, 800);
-            } else {
-                statusBox.innerText = "Erro: Pix de R$ 1,00 não localizado para este código.";
-                statusBox.style.color = "#ef4444";
-            }
+        function irParaMensagem() {
+            // Só executa o redirecionamento se o tempo já tiver acabado e o botão estiver ativo
+            window.location.replace("conselho.html");
         }
     </script>
 </body>
